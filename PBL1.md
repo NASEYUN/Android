@@ -78,5 +78,5 @@ Azure Mobile Apps - file storage 50GB - $72
 <p>
 → 비용적 측면에서 Firebase와 Back4app이 효율적이다. <br>
 그러나 Back4app는 속도가 비교적 느려 소규모 스타트업에 적합하다는 단점이 있다.
-<p>
-**Back4app의 이러한 단점**과 **Firebase의 장점**(특히 FCM을 통해 무제한으로 푸시 알림을 제공한다)을 고려하여 **Firebase를 선택**하였다.
+
+##### Back4app의 이러한 단점과 Firebase의 장점(특히 FCM을 통해 무제한으로 푸시 알림을 제공한다)을 고려하여 Firebase를 선택하였다.
