@@ -35,14 +35,19 @@
         <TextView
                 android:text="TextView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/dateTextView"/>
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:layout_margin="5dp"
+                android:id="@+id/dateTextView"/>
         <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" tools:srcCompat="@tools:sample/avatars"
+                android:layout_height="wrap_content"
+                tools:srcCompat="@tools:sample/avatars"
                 android:id="@+id/imageView2"/>
     </LinearLayout>
     <ImageView
             android:layout_width="match_parent"
-            android:layout_height="match_parent" tools:srcCompat="@tools:sample/avatars"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/color"
             android:id="@+id/pictureImageView"/>
 </LinearLayout>
