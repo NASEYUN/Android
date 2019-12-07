@@ -50,43 +50,6 @@
           ]
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:997019370180:android:83eeb81ee36322f8bc3f91",
-        "android_client_info": {
-          "package_name": "com.example.holic.basecalendar"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "997019370180-qku8q2rnvqcgn6cvf7usrf7o874uhr2f.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.holic.basecalendar",
-            "certificate_hash": "f23862ee328654988803dc33b38a3fec48a80575"
-          }
-        },
-        {
-          "client_id": "997019370180-d6nftlrtkhk2ibmtf38anub92vjrs098.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDSXg2o9eqpBBL1RhstAomUQSkjaB2ZP98"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "997019370180-d6nftlrtkhk2ibmtf38anub92vjrs098.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"

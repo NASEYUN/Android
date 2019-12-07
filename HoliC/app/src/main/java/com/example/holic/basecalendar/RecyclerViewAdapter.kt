@@ -1,10 +1,15 @@
 package com.example.holic.basecalendar
 
+import android.app.AlertDialog
+import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.holic.R
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.synthetic.main.activity_add_schedule.view.*
 import kotlinx.android.synthetic.main.item_schedule.*
 import java.util.*
 
@@ -12,11 +17,16 @@ class RecyclerViewAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter
 
     val baseCalendar = BaseCalendar()
 
+    //firebase
+    val firebaseDatabase = FirebaseDatabase.getInstance()
+    val databaseReference = firebaseDatabase.getReference("schedule")
+
     init {
         baseCalendar.initBaseCalendar {
             refreshView(it)
         }
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderHelper {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_schedule, parent, false)
@@ -38,6 +48,32 @@ class RecyclerViewAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter
             holder.dateTextView.alpha = 1f
         }
         holder.dateTextView.text = baseCalendar.data[position].toString()
+
+        holder.dateTextView.setOnClickListener{
+            var dialogView = LayoutInflater.from(holder.dateTextView.context).inflate(R.layout.activity_add_schedule, null)
+
+            var builder = AlertDialog.Builder(holder.dateTextView.context).setView(dialogView).setTitle("일정 등록")
+            //show dialog
+            val AlertDialog = builder.create()
+            AlertDialog.show()
+
+            //확인버튼 눌렀을때
+            dialogView.button_confirm.setOnClickListener {
+                //값저장
+                val add_schedule = dialogView.editText_Calendar_Add.text.toString()
+                val add_location = dialogView.editText_Location.text.toString()
+                databaseReference.setValue(add_schedule)
+                Log.v("add", add_schedule)
+                Log.v("add", "스케쥴추가")
+                AlertDialog.dismiss()
+                //databaseReference.child("schedule").child("scheduleName").push().setValue(add_schedule)
+                //databaseReference.child("schedule").child("scheduleLocation").push().setValue(add_location)
+            }
+            //취소버튼 눌렀을때
+            dialogView.button_cancel.setOnClickListener {
+                AlertDialog.cancel()
+            }
+        }
     }
 
     fun changeToPrevMonth() {
