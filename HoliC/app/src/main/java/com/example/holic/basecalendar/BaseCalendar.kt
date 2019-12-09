@@ -15,6 +15,8 @@ class BaseCalendar {
     var nextMonthHeadOffset = 0
     var currentMonthMaxDate = 0
 
+    var nowMonth =""
+
     var data = arrayListOf<Int>()
 
     init {
@@ -24,6 +26,7 @@ class BaseCalendar {
     // Init calendar.
     fun initBaseCalendar(refreshCallback: (Calendar) -> Unit) {
         makeMonthDate(refreshCallback)
+        nowMonth=(calendar.get(Calendar.MONTH)+1).toString()
     }
 
     // Change to prev month.
@@ -64,6 +67,8 @@ class BaseCalendar {
 
         nextMonthHeadOffset = LOW_OF_CALENDAR * DAYS_OF_WEEK - (prevMonthTailOffset + currentMonthMaxDate)
         makeNextMonthHead()
+
+        nowMonth=(calendar.get(Calendar.MONTH)+1).toString()
 
         refreshCallback(calendar)
     }

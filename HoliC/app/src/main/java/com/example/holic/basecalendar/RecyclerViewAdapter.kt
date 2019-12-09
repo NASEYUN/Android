@@ -17,6 +17,12 @@ class RecyclerViewAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter
 
     val baseCalendar = BaseCalendar()
 
+    //weather
+    var result = WeatherTask().execute().get()
+    var spl2 = result.substring(1,result.length-1)
+    var spl = spl2.split(", ")
+    var c = Calendar.getInstance()
+
     //firebase
     val firebaseDatabase = FirebaseDatabase.getInstance()
     val databaseReference = firebaseDatabase.getReference("schedule")
@@ -75,6 +81,35 @@ class RecyclerViewAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter
                 AlertDialog.cancel()
             }
         }
+
+
+        //날씨처리
+        if(baseCalendar.nowMonth==(c.get(Calendar.MONTH)+1).toString()) {
+            if (baseCalendar.data[position].toString().equals((c.get(Calendar.DATE)).toString()) && baseCalendar.currentMonthMaxDate.toString().equals(
+                    (baseCalendar.data.size - baseCalendar.nextMonthHeadOffset).toString()
+                )
+            )
+                holder.imageWeather?.setImageResource(spl[0].toInt())
+            if (baseCalendar.data[position].toString().equals((c.get(Calendar.DATE) + 1).toString()) &&
+                baseCalendar.currentMonthMaxDate.toString().equals((baseCalendar.data.size - baseCalendar.nextMonthHeadOffset).toString())
+            )
+                holder.imageWeather?.setImageResource(spl[1].toInt())
+            if (baseCalendar.data[position].toString().equals((c.get(Calendar.DATE) + 2).toString()) &&
+                baseCalendar.currentMonthMaxDate.toString().equals((baseCalendar.data.size - baseCalendar.nextMonthHeadOffset).toString())
+            )
+                holder.imageWeather?.setImageResource(spl[2].toInt())
+            if (baseCalendar.data[position].toString().equals((c.get(Calendar.DATE) + 3).toString()) &&
+                baseCalendar.currentMonthMaxDate.toString().equals((baseCalendar.data.size - baseCalendar.nextMonthHeadOffset).toString())
+            )
+                holder.imageWeather?.setImageResource(spl[3].toInt())
+            if (baseCalendar.data[position].toString().equals((c.get(Calendar.DATE) + 4).toString()) &&
+                baseCalendar.currentMonthMaxDate.toString().equals((baseCalendar.data.size - baseCalendar.nextMonthHeadOffset).toString())
+            )
+                holder.imageWeather?.setImageResource(spl[4].toInt())
+        }
+            if (position>baseCalendar.currentMonthMaxDate)
+                holder.imageWeather?.setImageResource(0)
+
     }
 
     fun changeToPrevMonth() {
