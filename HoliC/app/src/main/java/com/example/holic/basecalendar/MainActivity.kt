@@ -2,6 +2,7 @@ package com.example.holic.basecalendar
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
@@ -36,56 +37,78 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        var weekLinearLayout = findViewById<LinearLayout>(R.id.weekLinearLayout)
+        var menuLinearLayout = findViewById<LinearLayout>(R.id.menuLinearLayout)
+
         initView()
 
-        val calendar = findViewById<EditText>(R.id.editText_Calendar_Add)
-        val location = findViewById<EditText>(R.id.editText_Location)
-        val time = findViewById<Spinner>(R.id.spinner_Time)
+//        val calendar = findViewById<EditText>(R.id.editText_Calendar_Add)
+//        val location = findViewById<EditText>(R.id.editText_Location)
+//        val time = findViewById<Spinner>(R.id.spinner_Time)
+
 
         //색상변경
+        var colorPreference =""
+
+        if(savedInstanceState==null){
+            var prefs : SharedPreferences = getSharedPreferences("color_info", 0)
+            var colorPreference = prefs.getString("color", "#e0e7ee")
+            weekLinearLayout.setBackgroundColor(Color.parseColor(colorPreference))
+            menuLinearLayout.setBackgroundColor(Color.parseColor(colorPreference))
+        }
+
         var setColorImage = findViewById<ImageView>(R.id.setColorImage)
         setColorImage.setOnClickListener {
             var items = arrayOf("default", "red", "yellow", "green", "blue", "violet", "pink")
-            var weekLinearLayout = findViewById<LinearLayout>(R.id.weekLinearLayout)
-            var menuLinearLayout = findViewById<LinearLayout>(R.id.menuLinearLayout)
 
             var builder = AlertDialog.Builder(this)
             builder.setTitle("테마 변경")
             builder.setIcon(R.drawable.palette)
             builder.setSingleChoiceItems(items, -1,  { _, which->
+                var prefs : SharedPreferences = getSharedPreferences("color_info", 0)
+                var editor : SharedPreferences.Editor = prefs.edit()
+
                 if(items[which].equals("default")) {
                     weekLinearLayout.setBackgroundColor(Color.parseColor("#e0e7ee"))
                     menuLinearLayout.setBackgroundColor(Color.parseColor("#e0e7ee"))
+                    editor.putString("color","#e0e7ee" )
                 }
                 if(items[which].equals("red")){
                     weekLinearLayout.setBackgroundColor(Color.parseColor("#D89090"))
                     menuLinearLayout.setBackgroundColor(Color.parseColor("#D89090"))
+                    editor.putString("color","#D89090" )
                 }
                 if(items[which].equals("blue")){
                     weekLinearLayout.setBackgroundColor(Color.parseColor("#B5E3D5"))
                     menuLinearLayout.setBackgroundColor(Color.parseColor("#B5E3D5"))
+                    editor.putString("color","#B5E3D5" )
                 }
                 if(items[which].equals("green")){
                     weekLinearLayout.setBackgroundColor(Color.parseColor("#E0DC96"))
                     menuLinearLayout.setBackgroundColor(Color.parseColor("#E0DC96"))
+                    editor.putString("color","#E0DC96" )
                 }
                 if(items[which].equals("violet")){
                     weekLinearLayout.setBackgroundColor(Color.parseColor("#CCC6E6"))
                     menuLinearLayout.setBackgroundColor(Color.parseColor("#CCC6E6"))
+                    editor.putString("color","#CCC6E6" )
                 }
                 if(items[which].equals("yellow")){
                     weekLinearLayout.setBackgroundColor(Color.parseColor("#EED39A"))
                     menuLinearLayout.setBackgroundColor(Color.parseColor("#EED39A"))
+                    editor.putString("color","#EED39A" )
                 }
                 if(items[which].equals("pink")){
                     weekLinearLayout.setBackgroundColor(Color.parseColor("#EFB7B7"))
                     menuLinearLayout.setBackgroundColor(Color.parseColor("#EFB7B7"))
+                    editor.putString("color","#EFB7B7" )
                 }
+                editor.apply()
             })
 
             val AlertDialog = builder.create()
             AlertDialog.show()
-        }
+        } //여기까지 색상변경
 
 
         /*val calendar_recyclerView = findViewById<RecyclerView>(R.id.recyclerViewSchedule)
@@ -118,7 +141,7 @@ class MainActivity : AppCompatActivity() {
 
         recyclerViewSchedule.layoutManager = GridLayoutManager(this, BaseCalendar.DAYS_OF_WEEK)
         recyclerViewSchedule.adapter = scheduleRecyclerViewAdapter
-        recyclerViewSchedule.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL))
+        //recyclerViewSchedule.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL))
         recyclerViewSchedule.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         previousMonthButton.setOnClickListener {
