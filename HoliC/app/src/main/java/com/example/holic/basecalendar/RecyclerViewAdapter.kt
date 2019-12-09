@@ -62,8 +62,7 @@ class RecyclerViewAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter
                 //값저장
                 val add_schedule = dialogView.editText_Calendar_Add.text.toString()
                 val add_location = dialogView.editText_Location.text.toString()
-                databaseReference.child("scheduleName").setValue(add_schedule)
-                databaseReference.child("scheduleLocation").setValue(add_location)
+                databaseReference.setValue(add_schedule)
                 Log.v("add", add_schedule)
                 Log.v("add", "스케쥴추가")
                 AlertDialog.dismiss()
