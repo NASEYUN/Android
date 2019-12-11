@@ -17,7 +17,10 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.holic.R
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_add_schedule.view.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_schedule.*
@@ -31,9 +34,11 @@ class MainActivity : AppCompatActivity() {
 
     //firebase
     val firebaseDatabase = FirebaseDatabase.getInstance()
-    val databaseReference = firebaseDatabase.getReference("schedule")
+    val databaseReference = firebaseDatabase.getReference("user")
 
-
+    var scheduleList = ArrayList<String>()
+    var photoList = ArrayList<Int>()
+    var memoList = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +47,8 @@ class MainActivity : AppCompatActivity() {
         var weekLinearLayout = findViewById<LinearLayout>(R.id.weekLinearLayout)
         var menuLinearLayout = findViewById<LinearLayout>(R.id.menuLinearLayout)
 
-        initView()
+        initView() // 달력 설정
+        readFirebaseDb() // Read from the database
 
         //색상변경
         var colorPreference =""
@@ -107,6 +113,21 @@ class MainActivity : AppCompatActivity() {
             AlertDialog.show()
         } //여기까지 색상변경
 
+        //데베 내용이 변경될때 마다 호출
+        databaseReference.child("schedule").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(datasnapshot: DataSnapshot) {
+                val children = datasnapshot.children
+                children.forEach {
+                    val schedule = datasnapshot.getValue().toString()
+
+                    Log.v("seyuuun2", schedule)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("seyuuun", "onCancelled: " + error.message)
+            }
+        })
 
     }
 
@@ -131,6 +152,11 @@ class MainActivity : AppCompatActivity() {
     fun refreshCurrentMonth(calendar: Calendar) {
         val sdf = SimpleDateFormat("yyyy MM", Locale.KOREAN)
         textViewCurrentMonth.text = sdf.format(calendar.time)
+    }
+
+    // Read from the database
+    fun readFirebaseDb() {
+
     }
 
     // 메뉴바 설정

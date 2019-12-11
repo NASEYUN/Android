@@ -1,11 +1,13 @@
 package com.example.holic.basecalendar
 
 import android.app.AlertDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TimePicker
 import androidx.recyclerview.widget.RecyclerView
 import com.example.holic.R
 import com.google.firebase.database.FirebaseDatabase
@@ -16,16 +18,18 @@ import java.util.*
 class RecyclerViewAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter<ViewHolderHelper>() {
 
     val baseCalendar = BaseCalendar()
+    //val cal = Calendar.getInstance()
+
+    //firebase
+    val firebaseDatabase = FirebaseDatabase.getInstance()
+    val databaseReference = firebaseDatabase.getReference("user")
+    val scheduledatabaseRefernce = databaseReference.child("schedule")
 
     //weather
     var result = WeatherTask().execute().get()
     var spl2 = result.substring(1,result.length-1)
     var spl = spl2.split(", ")
     var c = Calendar.getInstance()
-
-    //firebase
-    val firebaseDatabase = FirebaseDatabase.getInstance()
-    val databaseReference = firebaseDatabase.getReference("schedule")
 
     init {
         baseCalendar.initBaseCalendar {
@@ -44,6 +48,7 @@ class RecyclerViewAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter
     }
 
     override fun onBindViewHolder(holder: ViewHolderHelper, position: Int) {
+
         if (position % BaseCalendar.DAYS_OF_WEEK == 0) holder.dateTextView.setTextColor(Color.parseColor("#ff1200"))
         else holder.dateTextView.setTextColor(Color.parseColor("#676d6e"))
 
@@ -67,21 +72,21 @@ class RecyclerViewAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter
                 //값저장
                 val add_schedule = dialogView.editText_Calendar_Add.text.toString()
                 val add_location = dialogView.editText_Location.text.toString()
-                databaseReference.child("scheduleName").setValue(add_schedule)
-                databaseReference.child("scheduleLocation").setValue(add_location)
-                Log.v("add", add_schedule)
-                Log.v("add", "스케쥴추가")
+                val add_Time = dialogView.timePicker_Time
+                add_Time.setIs24HourView(true)
+                //입력한 시간과 분 가져오기
+                val schedule_Time = add_Time.hour.toString() + "시" + add_Time.minute.toString()+"분"
+                Log.v("seyuuun", schedule_Time)
+                databaseReference.child("schedule").child("scheduleName").push().setValue(add_schedule)
+                databaseReference.child("schedule").child("scheduleLocation").push().setValue(add_location)
+                databaseReference.child("schedule").child("scheduleTime").push().setValue(schedule_Time)
                 AlertDialog.dismiss()
-                //databaseReference.child("schedule").child("scheduleName").push().setValue(add_schedule)
-                //databaseReference.child("schedule").child("scheduleLocation").push().setValue(add_location)
             }
             //취소버튼 눌렀을때
             dialogView.button_cancel.setOnClickListener {
                 AlertDialog.cancel()
             }
         }
-
-
         //날씨처리
         if(baseCalendar.nowMonth==(c.get(Calendar.MONTH)+1).toString()) {
             if (baseCalendar.data[position].toString().equals((c.get(Calendar.DATE)).toString()) && baseCalendar.currentMonthMaxDate.toString().equals(
@@ -106,8 +111,8 @@ class RecyclerViewAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter
             )
                 holder.imageWeather?.setImageResource(spl[4].toInt())
         }
-            if (position>baseCalendar.currentMonthMaxDate)
-                holder.imageWeather?.setImageResource(0)
+        if (position>baseCalendar.currentMonthMaxDate)
+            holder.imageWeather?.setImageResource(0)
 
     }
 
