@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -41,11 +43,6 @@ class MainActivity : AppCompatActivity() {
         var menuLinearLayout = findViewById<LinearLayout>(R.id.menuLinearLayout)
 
         initView()
-
-//        val calendar = findViewById<EditText>(R.id.editText_Calendar_Add)
-//        val location = findViewById<EditText>(R.id.editText_Location)
-//        val time = findViewById<Spinner>(R.id.spinner_Time)
-
 
         //색상변경
         var colorPreference =""
@@ -111,28 +108,6 @@ class MainActivity : AppCompatActivity() {
         } //여기까지 색상변경
 
 
-        /*val calendar_recyclerView = findViewById<RecyclerView>(R.id.recyclerViewSchedule)
-        calendar_recyclerView.setOnClickListener {
-            var dialogView = LayoutInflater.from(this).inflate(R.layout.activity_add_schedule, null)
-
-            var builder = AlertDialog.Builder(this).setView(dialogView).setTitle("일정 등록")
-            //show dialog
-            val AlertDialog = builder.create()
-            AlertDialog.show()
-
-            //확인버튼 눌렀을때
-            builder.set {
-                //값저장
-                val add_schedule = calendar.text.toString()
-                val add_location = location.text.toString()
-                databaseReference.child("schedule").child("scheduleName").setValue(add_schedule)
-                databaseReference.child("schedule").child("scheduleLocation").setValue(add_location)
-            }
-            //취소버튼 눌렀을때
-            dialogView.button_cancel.setOnClickListener {
-                AlertDialog.cancel()
-            }
-        }*/
     }
 
     fun initView() {
@@ -156,6 +131,46 @@ class MainActivity : AppCompatActivity() {
     fun refreshCurrentMonth(calendar: Calendar) {
         val sdf = SimpleDateFormat("yyyy MM", Locale.KOREAN)
         textViewCurrentMonth.text = sdf.format(calendar.time)
+    }
+
+    // 메뉴바 설정
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    // 메뉴바 '+ 아이콘' 클릭 시
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle presses on the action bar items
+        when (item.itemId){
+            // 일정(다중 선택) 등록 및 사진 메모 추가
+            R.id.addIcon -> {
+                addDialog()
+                return true
+            }
+            // 색상 테마 변경
+            R.id.settingIcon -> {
+                return true
+            }
+            else -> {
+                return super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
+    fun addDialog() {
+        val builder = AlertDialog.Builder(this)
+        val dialogView = layoutInflater.inflate(R.layout.photo_memo_custom_dialog, null)
+
+        builder.setView(dialogView)
+            .setPositiveButton("확인") { dialogInterface, i ->
+
+                /* 확인일 때 main의 View의 값에 dialog View에 있는 값을 적용 */
+            }
+            .setNegativeButton("취소") { dialogInterface, i ->
+                /* 취소일 때 아무 액션이 없으므로 빈칸 */
+            }
+            .show()
     }
 
 }
