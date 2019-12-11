@@ -18,13 +18,15 @@
             android:layout_margin="5dp"
             android:textColor="#676d6e"
             android:textStyle="bold"
+            android:layout_weight="1"
             android:id="@+id/dateTextView"/>
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:srcCompat="@tools:sample/avatars"
-            android:id="@+id/imageView"/>
+            android:id="@+id/imageWeather"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_weight="1"
+            tools:srcCompat="@tools:sample/avatars" />
     </LinearLayout>
 
     <ImageView

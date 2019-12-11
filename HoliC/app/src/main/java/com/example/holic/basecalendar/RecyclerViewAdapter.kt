@@ -17,6 +17,12 @@ class RecyclerViewAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter
 
     val baseCalendar = BaseCalendar()
 
+    //weather
+    var result = WeatherTask().execute().get()
+    var spl2 = result.substring(1,result.length-1)
+    var spl = spl2.split(", ")
+    var c = Calendar.getInstance()
+
     //firebase
     val firebaseDatabase = FirebaseDatabase.getInstance()
     val databaseReference = firebaseDatabase.getReference("schedule")
@@ -38,7 +44,6 @@ class RecyclerViewAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter
     }
 
     override fun onBindViewHolder(holder: ViewHolderHelper, position: Int) {
-
         if (position % BaseCalendar.DAYS_OF_WEEK == 0) holder.dateTextView.setTextColor(Color.parseColor("#ff1200"))
         else holder.dateTextView.setTextColor(Color.parseColor("#676d6e"))
 
@@ -62,7 +67,8 @@ class RecyclerViewAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter
                 //값저장
                 val add_schedule = dialogView.editText_Calendar_Add.text.toString()
                 val add_location = dialogView.editText_Location.text.toString()
-                databaseReference.setValue(add_schedule)
+                databaseReference.child("scheduleName").setValue(add_schedule)
+                databaseReference.child("scheduleLocation").setValue(add_location)
                 Log.v("add", add_schedule)
                 Log.v("add", "스케쥴추가")
                 AlertDialog.dismiss()
@@ -74,6 +80,35 @@ class RecyclerViewAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter
                 AlertDialog.cancel()
             }
         }
+
+
+        //날씨처리
+        if(baseCalendar.nowMonth==(c.get(Calendar.MONTH)+1).toString()) {
+            if (baseCalendar.data[position].toString().equals((c.get(Calendar.DATE)).toString()) && baseCalendar.currentMonthMaxDate.toString().equals(
+                    (baseCalendar.data.size - baseCalendar.nextMonthHeadOffset).toString()
+                )
+            )
+                holder.imageWeather?.setImageResource(spl[0].toInt())
+            if (baseCalendar.data[position].toString().equals((c.get(Calendar.DATE) + 1).toString()) &&
+                baseCalendar.currentMonthMaxDate.toString().equals((baseCalendar.data.size - baseCalendar.nextMonthHeadOffset).toString())
+            )
+                holder.imageWeather?.setImageResource(spl[1].toInt())
+            if (baseCalendar.data[position].toString().equals((c.get(Calendar.DATE) + 2).toString()) &&
+                baseCalendar.currentMonthMaxDate.toString().equals((baseCalendar.data.size - baseCalendar.nextMonthHeadOffset).toString())
+            )
+                holder.imageWeather?.setImageResource(spl[2].toInt())
+            if (baseCalendar.data[position].toString().equals((c.get(Calendar.DATE) + 3).toString()) &&
+                baseCalendar.currentMonthMaxDate.toString().equals((baseCalendar.data.size - baseCalendar.nextMonthHeadOffset).toString())
+            )
+                holder.imageWeather?.setImageResource(spl[3].toInt())
+            if (baseCalendar.data[position].toString().equals((c.get(Calendar.DATE) + 4).toString()) &&
+                baseCalendar.currentMonthMaxDate.toString().equals((baseCalendar.data.size - baseCalendar.nextMonthHeadOffset).toString())
+            )
+                holder.imageWeather?.setImageResource(spl[4].toInt())
+        }
+            if (position>baseCalendar.currentMonthMaxDate)
+                holder.imageWeather?.setImageResource(0)
+
     }
 
     fun changeToPrevMonth() {

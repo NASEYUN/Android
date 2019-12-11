@@ -1,12 +1,18 @@
 package com.example.holic.basecalendar
 
 import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
-import android.widget.EditText
-import android.widget.Spinner
-import android.widget.TextView
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,8 +20,10 @@ import com.example.holic.R
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_add_schedule.view.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.item_schedule.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,38 +33,81 @@ class MainActivity : AppCompatActivity() {
     val firebaseDatabase = FirebaseDatabase.getInstance()
     val databaseReference = firebaseDatabase.getReference("schedule")
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        var weekLinearLayout = findViewById<LinearLayout>(R.id.weekLinearLayout)
+        var menuLinearLayout = findViewById<LinearLayout>(R.id.menuLinearLayout)
+
         initView()
 
-        val calendar = findViewById<EditText>(R.id.editText_Calendar_Add)
-        val location = findViewById<EditText>(R.id.editText_Location)
-        val time = findViewById<Spinner>(R.id.spinner_Time)
+        //색상변경
+        var colorPreference =""
 
-        /*val calendar_recyclerView = findViewById<RecyclerView>(R.id.recyclerViewSchedule)
-        calendar_recyclerView.setOnClickListener {
-            var dialogView = LayoutInflater.from(this).inflate(R.layout.activity_add_schedule, null)
+        if(savedInstanceState==null){
+            var prefs : SharedPreferences = getSharedPreferences("color_info", 0)
+            var colorPreference = prefs.getString("color", "#e0e7ee")
+            weekLinearLayout.setBackgroundColor(Color.parseColor(colorPreference))
+            menuLinearLayout.setBackgroundColor(Color.parseColor(colorPreference))
+        }
 
-            var builder = AlertDialog.Builder(this).setView(dialogView).setTitle("일정 등록")
-            //show dialog
+        var setColorImage = findViewById<ImageView>(R.id.setColorImage)
+        setColorImage.setOnClickListener {
+            var items = arrayOf("default", "red", "yellow", "green", "blue", "violet", "pink")
+
+            var builder = AlertDialog.Builder(this)
+            builder.setTitle("테마 변경")
+            builder.setIcon(R.drawable.palette)
+            builder.setSingleChoiceItems(items, -1,  { _, which->
+                var prefs : SharedPreferences = getSharedPreferences("color_info", 0)
+                var editor : SharedPreferences.Editor = prefs.edit()
+
+                if(items[which].equals("default")) {
+                    weekLinearLayout.setBackgroundColor(Color.parseColor("#e0e7ee"))
+                    menuLinearLayout.setBackgroundColor(Color.parseColor("#e0e7ee"))
+                    editor.putString("color","#e0e7ee" )
+                }
+                if(items[which].equals("red")){
+                    weekLinearLayout.setBackgroundColor(Color.parseColor("#D89090"))
+                    menuLinearLayout.setBackgroundColor(Color.parseColor("#D89090"))
+                    editor.putString("color","#D89090" )
+                }
+                if(items[which].equals("blue")){
+                    weekLinearLayout.setBackgroundColor(Color.parseColor("#B5E3D5"))
+                    menuLinearLayout.setBackgroundColor(Color.parseColor("#B5E3D5"))
+                    editor.putString("color","#B5E3D5" )
+                }
+                if(items[which].equals("green")){
+                    weekLinearLayout.setBackgroundColor(Color.parseColor("#E0DC96"))
+                    menuLinearLayout.setBackgroundColor(Color.parseColor("#E0DC96"))
+                    editor.putString("color","#E0DC96" )
+                }
+                if(items[which].equals("violet")){
+                    weekLinearLayout.setBackgroundColor(Color.parseColor("#CCC6E6"))
+                    menuLinearLayout.setBackgroundColor(Color.parseColor("#CCC6E6"))
+                    editor.putString("color","#CCC6E6" )
+                }
+                if(items[which].equals("yellow")){
+                    weekLinearLayout.setBackgroundColor(Color.parseColor("#EED39A"))
+                    menuLinearLayout.setBackgroundColor(Color.parseColor("#EED39A"))
+                    editor.putString("color","#EED39A" )
+                }
+                if(items[which].equals("pink")){
+                    weekLinearLayout.setBackgroundColor(Color.parseColor("#EFB7B7"))
+                    menuLinearLayout.setBackgroundColor(Color.parseColor("#EFB7B7"))
+                    editor.putString("color","#EFB7B7" )
+                }
+                editor.apply()
+            })
+
             val AlertDialog = builder.create()
             AlertDialog.show()
+        } //여기까지 색상변경
 
-            //확인버튼 눌렀을때
-            builder.set {
-                //값저장
-                val add_schedule = calendar.text.toString()
-                val add_location = location.text.toString()
-                databaseReference.child("schedule").child("scheduleName").setValue(add_schedule)
-                databaseReference.child("schedule").child("scheduleLocation").setValue(add_location)
-            }
-            //취소버튼 눌렀을때
-            dialogView.button_cancel.setOnClickListener {
-                AlertDialog.cancel()
-            }
-        }*/
+
     }
 
     fun initView() {
@@ -65,7 +116,7 @@ class MainActivity : AppCompatActivity() {
 
         recyclerViewSchedule.layoutManager = GridLayoutManager(this, BaseCalendar.DAYS_OF_WEEK)
         recyclerViewSchedule.adapter = scheduleRecyclerViewAdapter
-        recyclerViewSchedule.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL))
+        //recyclerViewSchedule.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL))
         recyclerViewSchedule.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         previousMonthButton.setOnClickListener {
@@ -81,5 +132,46 @@ class MainActivity : AppCompatActivity() {
         val sdf = SimpleDateFormat("yyyy MM", Locale.KOREAN)
         textViewCurrentMonth.text = sdf.format(calendar.time)
     }
+
+    // 메뉴바 설정
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    // 메뉴바 '+ 아이콘' 클릭 시
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle presses on the action bar items
+        when (item.itemId){
+            // 일정(다중 선택) 등록 및 사진 메모 추가
+            R.id.addIcon -> {
+                addDialog()
+                return true
+            }
+            // 색상 테마 변경
+            R.id.settingIcon -> {
+                return true
+            }
+            else -> {
+                return super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
+    fun addDialog() {
+        val builder = AlertDialog.Builder(this)
+        val dialogView = layoutInflater.inflate(R.layout.photo_memo_custom_dialog, null)
+
+        builder.setView(dialogView)
+            .setPositiveButton("확인") { dialogInterface, i ->
+
+                /* 확인일 때 main의 View의 값에 dialog View에 있는 값을 적용 */
+            }
+            .setNegativeButton("취소") { dialogInterface, i ->
+                /* 취소일 때 아무 액션이 없으므로 빈칸 */
+            }
+            .show()
+    }
+
 }
 
