@@ -17,7 +17,10 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.holic.R
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_add_schedule.view.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_schedule.*
@@ -29,12 +32,6 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var scheduleRecyclerViewAdapter: RecyclerViewAdapter
 
-    //firebase
-    val firebaseDatabase = FirebaseDatabase.getInstance()
-    val databaseReference = firebaseDatabase.getReference("schedule")
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -43,6 +40,8 @@ class MainActivity : AppCompatActivity() {
         var menuLinearLayout = findViewById<LinearLayout>(R.id.menuLinearLayout)
 
         initView()
+
+
 
         //색상변경
         var colorPreference =""
@@ -107,6 +106,11 @@ class MainActivity : AppCompatActivity() {
             AlertDialog.show()
         } //여기까지 색상변경
 
+        //+버튼
+        var plusButton = findViewById<ImageView>(R.id.addButton)
+        plusButton.setOnClickListener{
+            addDialog()
+        }
 
     }
 
@@ -129,34 +133,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun refreshCurrentMonth(calendar: Calendar) {
-        val sdf = SimpleDateFormat("yyyy MM", Locale.KOREAN)
+        val sdf = SimpleDateFormat("yyyy년 MM월", Locale.KOREAN)
         textViewCurrentMonth.text = sdf.format(calendar.time)
     }
 
-    // 메뉴바 설정
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return true
-    }
-
-    // 메뉴바 '+ 아이콘' 클릭 시
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle presses on the action bar items
-        when (item.itemId){
-            // 일정(다중 선택) 등록 및 사진 메모 추가
-            R.id.addIcon -> {
-                addDialog()
-                return true
-            }
-            // 색상 테마 변경
-            R.id.settingIcon -> {
-                return true
-            }
-            else -> {
-                return super.onOptionsItemSelected(item)
-            }
-        }
-    }
 
     fun addDialog() {
         val builder = AlertDialog.Builder(this)
