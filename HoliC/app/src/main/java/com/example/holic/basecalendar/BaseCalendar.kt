@@ -1,5 +1,6 @@
 package com.example.holic.basecalendar
 
+import java.text.SimpleDateFormat
 import java.util.*
 
 class BaseCalendar {
@@ -16,6 +17,7 @@ class BaseCalendar {
     var currentMonthMaxDate = 0
 
     var nowMonth =""
+    var sdf="a"
 
     var data = arrayListOf<Int>()
 
@@ -37,6 +39,7 @@ class BaseCalendar {
         }else {
             calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1)
         }
+        sdf = SimpleDateFormat("yyyyMM", Locale.KOREAN).format(calendar.time)
         makeMonthDate(refreshCallback)
     }
 
@@ -48,6 +51,7 @@ class BaseCalendar {
         }else {
             calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1)
         }
+        sdf = SimpleDateFormat("yyyyMM", Locale.KOREAN).format(calendar.time)
         makeMonthDate(refreshCallback)
     }
 
@@ -85,6 +89,7 @@ class BaseCalendar {
     // Generate data for the current calendar.
     private fun makeCurrentMonth(calendar: Calendar) {
         for (i in 1..calendar.getActualMaximum(Calendar.DATE)) data.add(i)
+        sdf = SimpleDateFormat("yyyyMM", Locale.KOREAN).format(calendar.time)
     }
 
     // Generate data for the next month displayed before the last day of the current calendar.
