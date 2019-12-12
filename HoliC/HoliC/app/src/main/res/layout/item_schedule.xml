@@ -50,6 +50,11 @@
             tools:srcCompat="@tools:sample/avatars" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/scheduleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <ImageView
         android:id="@+id/pictureImageView"
         android:layout_width="match_parent"

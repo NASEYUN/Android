@@ -32,14 +32,6 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var scheduleRecyclerViewAdapter: RecyclerViewAdapter
 
-    //firebase
-    val firebaseDatabase = FirebaseDatabase.getInstance()
-    val databaseReference = firebaseDatabase.getReference("user")
-
-    var scheduleList = ArrayList<String>()
-    var photoList = ArrayList<Int>()
-    var memoList = ArrayList<String>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -47,8 +39,9 @@ class MainActivity : AppCompatActivity() {
         var weekLinearLayout = findViewById<LinearLayout>(R.id.weekLinearLayout)
         var menuLinearLayout = findViewById<LinearLayout>(R.id.menuLinearLayout)
 
-        initView() // 달력 설정
-        readFirebaseDb() // Read from the database
+        initView()
+
+
 
         //색상변경
         var colorPreference =""
@@ -113,21 +106,11 @@ class MainActivity : AppCompatActivity() {
             AlertDialog.show()
         } //여기까지 색상변경
 
-        //데베 내용이 변경될때 마다 호출
-        databaseReference.child("schedule").addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(datasnapshot: DataSnapshot) {
-                val children = datasnapshot.children
-                children.forEach {
-                    val schedule = datasnapshot.getValue().toString()
-
-                    Log.v("seyuuun2", schedule)
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("seyuuun", "onCancelled: " + error.message)
-            }
-        })
+        //+버튼
+        var plusButton = findViewById<ImageView>(R.id.addButton)
+        plusButton.setOnClickListener{
+            addDialog()
+        }
 
     }
 
@@ -150,39 +133,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun refreshCurrentMonth(calendar: Calendar) {
-        val sdf = SimpleDateFormat("yyyy MM", Locale.KOREAN)
+        val sdf = SimpleDateFormat("yyyy년 MM월", Locale.KOREAN)
         textViewCurrentMonth.text = sdf.format(calendar.time)
     }
 
-    // Read from the database
-    fun readFirebaseDb() {
-
-    }
-
-    // 메뉴바 설정
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return true
-    }
-
-    // 메뉴바 '+ 아이콘' 클릭 시
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle presses on the action bar items
-        when (item.itemId){
-            // 일정(다중 선택) 등록 및 사진 메모 추가
-            R.id.addIcon -> {
-                addDialog()
-                return true
-            }
-            // 색상 테마 변경
-            R.id.settingIcon -> {
-                return true
-            }
-            else -> {
-                return super.onOptionsItemSelected(item)
-            }
-        }
-    }
 
     fun addDialog() {
         val builder = AlertDialog.Builder(this)
